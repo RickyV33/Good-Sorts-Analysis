@@ -13,27 +13,6 @@ public class Main {
         int[] randomList = genRandomList();
         int[] ascendingList = genAscendingList();
         int[] descendingList = genDescendingList();
-        int[][] lists = {randomList, ascendingList, descendingList};
-
-
-        for (int[] list: lists) {
-            // Counts hold {# of comparisons, # of writes}
-            int[] countBubble = {0, 0};
-            int[] countInsertion = {0, 0};
-            int[] countSelection = {0, 0};
-            bubbleSort(list, countBubble);
-            insertionSort(list, countInsertion);
-            selectionSort(list, countSelection);
-
-            System.out.println("{COMPARE, WRITES}");
-            System.out.println("BUBBLE");
-            System.out.println(Arrays.toString(countBubble));
-            System.out.println("INSERTION");
-            System.out.println(Arrays.toString(countInsertion));
-            System.out.println("SELECTION");
-            System.out.println(Arrays.toString(countSelection));
-            System.out.println();
-        }
     }
 
     public int[] genRandomList() {
