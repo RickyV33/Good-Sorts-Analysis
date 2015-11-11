@@ -42,4 +42,19 @@ public class Main {
         return list;
     }
 
+    public int[] mergeSort(int[] numList) {
+
+       return null;
+    }
+
+    public int[] quickSort(int[] numList) {
+
+        return null;
+    }
+
+    public int[] heapSort(int[] numList) {
+
+        return null;
+    }
+
 }
