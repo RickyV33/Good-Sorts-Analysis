@@ -10,42 +10,16 @@ public class Main {
     }
 
     public void run() {
-        int[] randomList = genRandomList();
-        int[] ascendingList = genAscendingList();
-        int[] descendingList = genDescendingList();
+        IntListGenerator generator = new IntListGenerator();
+        int tenMillion = 10000000;
 
-        //System.out.println(Arrays.toString(randomList));
-        //System.out.println(Arrays.toString(mergeSort(randomList)));
-        System.out.println(Arrays.toString(randomList));
-        quickSort(randomList, 0, randomList.length - 1);
-        System.out.println(Arrays.toString(randomList));
-    }
+        int[] randomList = generator.randomList(tenMillion, tenMillion);
+        int[] ascendingList = generator.sortedList(tenMillion, tenMillion, true);
+        int[] descendingList = generator.sortedList(tenMillion, tenMillion, false);
 
-    public int[] genRandomList() {
-        Random random = new Random();
-        int[] list = new int[5];
+        int[] test = generator.partiallySortedList(10, 10, 60);
 
-        for (int i = 0; i < 5; ++i) {
-            list[i] = random.nextInt(10);
-        }
-        return list;
-    }
-    public int[] genAscendingList() {
-        int[] list = new int[100];
-
-        for (int i = 100; i > 0; --i) {
-            list[100-i] = i;
-        }
-        return list;
-    }
-
-    public int[] genDescendingList() {
-        int[] list = new int[100];
-
-        for (int i = 0; i < 100; ++i) {
-            list[i] = i;
-        }
-        return list;
+        System.out.println(Arrays.toString(test));
     }
 
     public int mergeSort(int[] numList) {
