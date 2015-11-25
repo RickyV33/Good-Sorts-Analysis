@@ -27,8 +27,8 @@ public class IntListGenerator {
             }
         }
         else {
-            for (int i = size-1; i > -1; --i) {
-                list[i] = i;
+            for (int i = size-1, k = 0; i > -1; --i, ++k) {
+                list[k] = i;
             }
         }
 

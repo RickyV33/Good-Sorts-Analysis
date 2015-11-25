@@ -9,10 +9,13 @@ public class MergeSort extends Sort{
     @Override
     public int[] sort(int[] list) {
         int[] copyList = list.clone();
+        int basicOpCount;
+
         size = list.length;
-        Long start = System.nanoTime();
+        long start = System.nanoTime();
         basicOpCount = mergeSort(copyList);
-        durationOfSort  = System.nanoTime() - start;
+        durationOfSort  += System.nanoTime() - start;
+        this.basicOpCount += basicOpCount;
         return copyList;
     }
 
