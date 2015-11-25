@@ -24,43 +24,41 @@ public class Main {
 
         generateSorts(sorts);
         generateListSizes(sizes);
+        deleteExistingResults(sorts);
 
         for (int size: sizes) {
+            //Generates the integer lists for each size
             generateLists(numListsMap, size);
             for (Map.Entry<String, int[]> entry: numListsMap.entrySet()) {
                 for (Sort sort: sorts) {
                     for (int i = 0; i < NUM_OF_TESTS; ++i) {
-                        //Sorts the lists
-                        int[] copy = entry.getValue().clone();
-                        Arrays.sort(copy);
-                        int[] sorted = sort.sort(entry.getValue());
-                        if (!Arrays.equals(copy,sorted) ) {
-
-                            System.out.println("DID NOT SORT CORRECTLY");
-                            System.out.println(sort.getTypeOfSort());
-                            System.out.println(entry.getKey());
-                            System.out.println("SYSTEM---->" + Arrays.toString(copy));
-                            System.out.println("SORTED BY OUR ARRAY--->" + Arrays.toString(sorted));
-                            return;
-                        }
+                        //Sorts the list with each sorting algorithm
+                        sort.sort(entry.getValue());
                     }
                 }
                 writeToFile(entry.getKey(), sorts);
-                //Resets the time and basic operation values for each sort
+                //Resets the time, size, and basic operation values for each sort
                 for (Sort sort: sorts) {
                     sort.reset();
                 }
             }
-
         }
     }
 
+    /**
+     * Generates an array of all the list sizes used for the analysis
+     * @param list The list that the sizes are stored in
+     */
     private void generateListSizes(int[] list) {
         for (int i = 0; i < SIZE; ++i) {
             list[i] = (int) Math.pow(10.0, i+1.0);
         }
     }
 
+    /**
+     * Generates a list of all the sorting algorithms used
+     * @param sorts A list of all the sorts
+     */
     private void generateSorts(List<Sort> sorts) {
         MergeSort merge = new MergeSort();
         QuickSort quick = new QuickSortRandomPivot();
@@ -75,8 +73,33 @@ public class Main {
         sorts.add(middlePivot);
     }
 
+    /**
+     * Generates all the integers lists used by the sorting algorithms
+     * @param numListsMap The list that all the lists will be stored in
+     * @param size The size of each list
+     */
+    private void generateLists(Map<String, int[]> numListsMap, int size) {
+        IntListGenerator generator = new IntListGenerator();
+
+        //Generates the different types of lists we'll be using
+        numListsMap.put("Random List", generator.randomList(size, MILLION));
+        numListsMap.put("Ascending List", generator.sortedList(size, MILLION, true));
+        numListsMap.put("Descending List", generator.sortedList(size, MILLION, false));
+        numListsMap.put("Sorted 25% List", generator.partiallySortedList(size, MILLION, TWENTY_FIVE_PERCENT));
+        numListsMap.put("Sorted 50% List", generator.partiallySortedList(size, MILLION, FIFTY_PERCENT));
+        numListsMap.put("Sorted 75% List", generator.partiallySortedList(size, MILLION, SEVENTY_FIVE_PERCENT));
+        numListsMap.put("Single Integer List", generator.repeatingList(size, STATIC_INT, STATIC_INT));
+        numListsMap.put("Alternating Pattern List", generator.repeatingList(size, PATTERN_SIZE, PATTERN_SIZE));
+        numListsMap.put("Random Pattern List", generator.randomList(size, PATTERN_SIZE));
+    }
+
+    /**
+     * Writes the analytical information of the sort into a file based named from the list
+     * @param listName The name of the list that is used as the filename
+     * @param sorts The list of sorts that are iterated through and written to a file
+     */
     private void writeToFile(String listName, List<Sort> sorts) {
-        PrintWriter writer = null;
+        PrintWriter writer;
         File file;
         FileOutputStream fs;
 
@@ -94,51 +117,31 @@ public class Main {
                 file = new File("Results/" + typeOfSort + ".txt");
                 if (!file.exists()) {
                     file.createNewFile();
-                    fs = new FileOutputStream(file);
-                } else {
-                    fs = new FileOutputStream(file, true);
                 }
+                fs = new FileOutputStream(file, true);
                 writer = new PrintWriter(fs);
-            } catch (FileNotFoundException e) {
-                System.out.println(e.getMessage());
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
-            }
 
-            writer.println(listName);
-            writer.println("Basic Operation count average: " + basicOpAvg);
-            writer.println("Time average: " + durationAvg );
-            writer.println("Size: " + size);
-            writer.println();
-            writer.close();
+                writer.println(listName);
+                writer.println("Basic Operation count average: " + basicOpAvg);
+                writer.println("Time average: " + durationAvg );
+                writer.println("Size: " + size);
+                writer.println();
+                writer.close();
+            } catch (IOException e) {
+                System.err.println(e.getMessage());
+            }
         }
 
     }
 
-    private void generateLists(Map<String, int[]> numListsMap, int size) {
-        IntListGenerator generator = new IntListGenerator();
+    private void deleteExistingResults(List<Sort> sorts) {
+        File file;
 
-        //Generates the different types of lists we'll be using
-        int[] randomList = generator.randomList(size, MILLION);
-        int[] ascendingList =generator.sortedList(size, MILLION, true);
-        int[] descendingList = generator.sortedList(size, MILLION, false);
-        int[] sorted25PercentList = generator.partiallySortedList(size, MILLION, TWENTY_FIVE_PERCENT);
-        int[] sorted50PercentList = generator.partiallySortedList(size, MILLION, FIFTY_PERCENT);
-        int[] sorted75PercentList = generator.partiallySortedList(size, MILLION, SEVENTY_FIVE_PERCENT);
-        int[] staticList = generator.repeatingList(size, STATIC_INT, STATIC_INT);
-        int[] alternatingPatternList = generator.repeatingList(size, PATTERN_SIZE, PATTERN_SIZE);
-        int[] randomPatternList = generator.randomList(size, PATTERN_SIZE);
-
-        numListsMap.put("Random List", randomList);
-        numListsMap.put("Ascending List", ascendingList);
-        numListsMap.put("Descending List", descendingList);
-        numListsMap.put("Sorted 25% List", sorted25PercentList);
-        numListsMap.put("Sorted 50% List", sorted50PercentList);
-        numListsMap.put("Sorted 75% List", sorted75PercentList);
-        numListsMap.put("Static List", staticList);
-        numListsMap.put("Alternating Pattern List", alternatingPatternList);
-        numListsMap.put("Random Pattern List", randomPatternList);
+        for (Sort sort: sorts) {
+            file = new File("Results/" + sort.getTypeOfSort() + ".txt");
+            if (file.exists()) {
+                file.delete();
+            }
+        }
     }
-
-
 }
