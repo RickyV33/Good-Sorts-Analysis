@@ -4,19 +4,32 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
+    /** The number of times each sorting algorithm will sort a given list.*/
     public static final int NUM_OF_TESTS = 100;
-    public static final int SIZE = 4;
-    public static final int MILLION = 100;
+    /** The size of each list that increments by a multiple of 10 */
+    public static final int SIZE = 6;
+    /** The range of numbers that can be in the list.*/
+    public static final int NUM_RANGE = 1000000;
+    /** Static value for 25 percent. */
     public static final int TWENTY_FIVE_PERCENT = 25;
+    /** Static value for 50 percent. */
     public static final int FIFTY_PERCENT = 50;
+    /** Static value for 75 percent. */
     public static final int SEVENTY_FIVE_PERCENT = 75;
+    /** The size of the pattern that is generated as an integer list. */
     public static final int PATTERN_SIZE = 2;
+    /** The integer that is used in the list of only one value. */
     public static final int STATIC_INT = 1;
 
     public static void main(String[] args) {
         new Main().run();
     }
 
+    /**
+     * The main execution file that iterates through a list of sizes that are used to generate various integer lists
+     * that are then passed through different sorting algorithms numerous amounts of times so it can record the average
+     * per size per list of each sorting algorithm into a text file.
+     */
     public void run() {
         Map<String, int[]> numListsMap = new HashMap<String, int[]>();
         List<Sort> sorts = new ArrayList<Sort>();
@@ -33,7 +46,15 @@ public class Main {
                 for (Sort sort: sorts) {
                     for (int i = 0; i < NUM_OF_TESTS; ++i) {
                         //Sorts the list with each sorting algorithm
-                        sort.sort(entry.getValue());
+                        int[] clone = entry.getValue().clone();
+                        int[] sorted = sort.sort(entry.getValue());
+                        Arrays.sort(clone);
+                        if (!Arrays.equals(sorted, clone)) {
+                            System.out.println("DID NOT SORT");
+                            System.out.println(entry.getKey());
+                            System.out.println(Arrays.toString(entry.getValue()));
+                            return;
+                        }
                     }
                 }
                 writeToFile(entry.getKey(), sorts);
@@ -51,7 +72,7 @@ public class Main {
      */
     private void generateListSizes(int[] list) {
         for (int i = 0; i < SIZE; ++i) {
-            list[i] = (int) Math.pow(10.0, i+1.0);
+            list[i] = (int) Math.pow(10, i+1.0);
         }
     }
 
@@ -69,8 +90,8 @@ public class Main {
         sorts.add(heap);
         sorts.add(quick);
         sorts.add(merge);
-        sorts.add(medianOfThree);
-        sorts.add(middlePivot);
+       // sorts.add(medianOfThree);
+       sorts.add(middlePivot);
     }
 
     /**
@@ -82,12 +103,12 @@ public class Main {
         IntListGenerator generator = new IntListGenerator();
 
         //Generates the different types of lists we'll be using
-        numListsMap.put("Random List", generator.randomList(size, MILLION));
-        numListsMap.put("Ascending List", generator.sortedList(size, MILLION, true));
-        numListsMap.put("Descending List", generator.sortedList(size, MILLION, false));
-        numListsMap.put("Sorted 25% List", generator.partiallySortedList(size, MILLION, TWENTY_FIVE_PERCENT));
-        numListsMap.put("Sorted 50% List", generator.partiallySortedList(size, MILLION, FIFTY_PERCENT));
-        numListsMap.put("Sorted 75% List", generator.partiallySortedList(size, MILLION, SEVENTY_FIVE_PERCENT));
+        numListsMap.put("Random List", generator.randomList(size, NUM_RANGE));
+        numListsMap.put("Ascending List", generator.sortedList(size, NUM_RANGE, true));
+        numListsMap.put("Descending List", generator.sortedList(size, NUM_RANGE, false));
+        numListsMap.put("Sorted 25% List", generator.partiallySortedList(size, NUM_RANGE, TWENTY_FIVE_PERCENT));
+        numListsMap.put("Sorted 50% List", generator.partiallySortedList(size, NUM_RANGE, FIFTY_PERCENT));
+        numListsMap.put("Sorted 75% List", generator.partiallySortedList(size, NUM_RANGE, SEVENTY_FIVE_PERCENT));
         numListsMap.put("Single Integer List", generator.repeatingList(size, STATIC_INT, STATIC_INT));
         numListsMap.put("Alternating Pattern List", generator.repeatingList(size, PATTERN_SIZE, PATTERN_SIZE));
         numListsMap.put("Random Pattern List", generator.randomList(size, PATTERN_SIZE));
@@ -108,10 +129,10 @@ public class Main {
         for (Sort sort: sorts) {
             String typeOfSort = sort.getTypeOfSort();
             int size = sort.getSize();
-            long duration = sort.getDurationOfSort();
-            int basicOp = sort.getBasicOpCount();
-            int basicOpAvg = basicOp / size;
-            long durationAvg = duration / size;
+            double duration = sort.getDurationOfSort();
+            long basicOp = sort.getBasicOpCount();
+            long basicOpAvg = basicOp / NUM_OF_TESTS;
+            double durationAvg = duration / NUM_OF_TESTS;
 
             try {
                 file = new File("Results/" + typeOfSort + ".txt");
@@ -122,9 +143,9 @@ public class Main {
                 writer = new PrintWriter(fs);
 
                 writer.println(listName);
-                writer.println("Basic Operation count average: " + basicOpAvg);
-                writer.println("Time average: " + durationAvg );
-                writer.println("Size: " + size);
+                writer.println("Basic operation count average: " + basicOpAvg);
+                writer.println("Time average: " + durationAvg + " ms" );
+                writer.println("List size: " + size);
                 writer.println();
                 writer.close();
             } catch (IOException e) {
@@ -134,6 +155,10 @@ public class Main {
 
     }
 
+    /**
+     * Deletes the result text files if they exist
+     * @param sorts The list that it iterates through to check if the sort result files exist
+     */
     private void deleteExistingResults(List<Sort> sorts) {
         File file;
 

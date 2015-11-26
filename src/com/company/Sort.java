@@ -2,8 +2,8 @@ package com.company;
 
 public abstract class Sort {
     private String typeOfSort;
-    protected int basicOpCount;
-    protected long durationOfSort;
+    protected long basicOpCount;
+    protected double durationOfSort;
     protected int size;
 
     public Sort() {}
@@ -24,11 +24,11 @@ public abstract class Sort {
         return typeOfSort;
     }
 
-    public int getBasicOpCount() {
+    public long getBasicOpCount() {
         return basicOpCount;
     }
 
-    public long getDurationOfSort() {
+    public double getDurationOfSort() {
         return durationOfSort;
     }
 

@@ -14,7 +14,7 @@ public class HeapSort extends Sort{
         size = list.length;
         Long start = System.nanoTime();
         basicOpCount = heapSort(copyList);
-        durationOfSort  += System.nanoTime() - start;
+        durationOfSort  += (System.nanoTime() - start) / 1000000;
         this.basicOpCount += basicOpCount;
         return copyList;
     }

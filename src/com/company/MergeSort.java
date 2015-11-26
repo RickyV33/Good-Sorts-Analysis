@@ -14,7 +14,7 @@ public class MergeSort extends Sort{
         size = list.length;
         long start = System.nanoTime();
         basicOpCount = mergeSort(copyList);
-        durationOfSort  += System.nanoTime() - start;
+        durationOfSort  += (System.nanoTime() - start) / 1000000;
         this.basicOpCount += basicOpCount;
         return copyList;
     }
