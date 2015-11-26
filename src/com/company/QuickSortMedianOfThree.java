@@ -29,6 +29,7 @@ public class QuickSortMedianOfThree extends QuickSort{
         int basicOpCount = 0;
 
 
+        //Finds the median between the first, middle, and last index
         if (numList[low] > numList[middle]) {
             if (numList[middle] > numList[high]) {
                 index = middle;
@@ -53,7 +54,6 @@ public class QuickSortMedianOfThree extends QuickSort{
         int pivot = numList[index];
         int i = low;
         int j = high + 1;
-
         //swap the lowest index with the pivot
         swap(numList, index, low);
         while (true) {
