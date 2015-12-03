@@ -45,11 +45,14 @@ public class QuickSortRandomPivot extends QuickSort{
             } while (numList[j] > pivot);
 
             if (i < j) {
-                //Swap the numbers so the lower number goes to the left and higher goes to the right
+                //Swap the numbers so the lower number
+                // goes to the left and higher goes to
+                // the right
                 swap(numList, i, j);
             } else {
                 int[] results = new int[2];
-                //Swap the pivot back into the middle of the left and right side of the list
+                //Swap the pivot back into the middle
+                // of the left and right side of the list
                 swap(numList, j, low);
                 results[0] = j;
                 results[1] = basicOpCount;

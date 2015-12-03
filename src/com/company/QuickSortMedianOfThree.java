@@ -6,6 +6,7 @@ import java.util.Random;
 
 public class QuickSortMedianOfThree extends QuickSort{
 
+    public int stack = 0;
     /**
      * Default constructor
      */

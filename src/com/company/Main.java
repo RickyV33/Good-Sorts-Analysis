@@ -1,5 +1,7 @@
 package com.company;
 
+import com.sun.xml.internal.bind.v2.model.annotation.Quick;
+
 import java.io.*;
 import java.util.*;
 
@@ -7,9 +9,9 @@ public class Main {
     /** The number of times each sorting algorithm will sort a given list.*/
     public static final int NUM_OF_TESTS = 100;
     /** The size of each list that increments by a multiple of 10 */
-    public static final int SIZE = 6;
+    public static final int SIZE = 5;
     /** The range of numbers that can be in the list.*/
-    public static final int NUM_RANGE = 1000000;
+    public static final int NUM_RANGE = 9999999;
     /** Static value for 25 percent. */
     public static final int TWENTY_FIVE_PERCENT = 25;
     /** Static value for 50 percent. */
@@ -21,7 +23,7 @@ public class Main {
     /** The integer that is used in the list of only one value. */
     public static final int STATIC_INT = 1;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         new Main().run();
     }
 
@@ -30,34 +32,41 @@ public class Main {
      * that are then passed through different sorting algorithms numerous amounts of times so it can record the average
      * per size per list of each sorting algorithm into a text file.
      */
-    public void run() {
+    public void run() throws Exception {
         Map<String, int[]> numListsMap = new HashMap<String, int[]>();
         List<Sort> sorts = new ArrayList<Sort>();
         int[] sizes = new int[SIZE];
 
+        //Creates a list of the sorts that will be used
         generateSorts(sorts);
+        //Generates a list of the sizes used for each list
         generateListSizes(sizes);
+        //Deletes the previous .txt files that store the results
         deleteExistingResults(sorts);
-
         for (int size: sizes) {
-            //Generates the integer lists for each size
+            //Generate the pre-assortment of integer lists of length size
             generateLists(numListsMap, size);
-            for (Map.Entry<String, int[]> entry: numListsMap.entrySet()) {
+            //For each item in the list where the key is the name/type of the list
+            //and the value is the list itself.
+            for (Map.Entry<String, int[]> list: numListsMap.entrySet()) {
                 for (Sort sort: sorts) {
+                    //Run the sort on the pseudo random generated
+                    // pre-assorted lists NUM_OF_TEST times
                     for (int i = 0; i < NUM_OF_TESTS; ++i) {
-                        //Sorts the list with each sorting algorithm
-                        int[] clone = entry.getValue().clone();
-                        int[] sorted = sort.sort(entry.getValue());
-                        Arrays.sort(clone);
-                        if (!Arrays.equals(sorted, clone)) {
-                            System.out.println("DID NOT SORT");
-                            System.out.println(entry.getKey());
-                            System.out.println(Arrays.toString(entry.getValue()));
-                            return;
+                        //Sorts the list
+                        int[] sortedList = sort.sort(list.getValue());
+                        //Test to see if the list was actually sorted
+                        int[] sortedClone = list.getValue().clone();
+                        Arrays.sort(sortedClone);
+                        if (!Arrays.equals(sortedList, sortedClone)) {
+                            throw new Exception("Failure to sort "
+                                    + list.getKey() + " for sort "
+                                    + sort.getTypeOfSort());
                         }
                     }
                 }
-                writeToFile(entry.getKey(), sorts);
+                //Write the average results for each sort in a file
+                writeToFile(list.getKey(), sorts);
                 //Resets the time, size, and basic operation values for each sort
                 for (Sort sort: sorts) {
                     sort.reset();
@@ -88,10 +97,10 @@ public class Main {
         QuickSort middlePivot = new QuickSortMiddlePivot();
 
         sorts.add(heap);
-        sorts.add(quick);
-        sorts.add(merge);
-       // sorts.add(medianOfThree);
-       sorts.add(middlePivot);
+        //sorts.add(quick);
+        //sorts.add(merge);
+        //sorts.add(medianOfThree);
+        //sorts.add(middlePivot);
     }
 
     /**
